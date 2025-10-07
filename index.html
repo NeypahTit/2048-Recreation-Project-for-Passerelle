@@ -2,12 +2,47 @@
 <html>
     <head>
         <title>2048 Recreation</title>
+        <link href="https://fonts.googleapis.com/css?family=Nunito:200,400,800" rel="stylesheet">
         <link rel="stylesheet" href="css/style.css">
         <script src="js/script.js"></script>
     </head>
     <body>
-        NOTHING HERE YET LOL!!!!!!!!!!!!!!!!!!!!!
-        <br><br><hr><br>
-        By Neypah_Tit
+        <div class="game">
+            <div class="head">
+                <div class="title">
+                    <span id="title">2048</span>
+                    &nbsp;
+                    <button id="repeat" class="info repeat" onClick='reset()'>↻</button>
+                </div>
+                <div class="score">Score<br/><span id="value"></span></div>
+                <div class="score best_score">Best<br/><span id="best_value"></span></div>
+            </div>
+            <div class="field">
+                <div class="row">
+                    <div class="cell">2</div>
+                    <div class="cell">4</div>
+                    <div class="cell">8</div>
+                    <div class="cell">16</div>
+                </div>
+                <div class="row">
+                    <div class="cell">32</div>
+                    <div class="cell">64</div>
+                    <div class="cell">128</div>
+                    <div class="cell">256</div>
+                </div>
+                <div class="row">
+                    <div class="cell">512</div>
+                    <div class="cell">1024</div>
+                    <div class="cell">2048</div>
+                    <div class="cell">1024</div>
+                </div>
+                <div class="row">
+                    <div class="cell">512</div>
+                    <div class="cell">256</div>
+                    <div class="cell">128</div>
+                    <div class="cell">64</div>
+                </div>
+            </div>
+        </div>
     </body>
 </html>
