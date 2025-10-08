@@ -3,7 +3,8 @@
 /** @todo
  * UNDERSTAND MOVEMENT!!!
  * Make game lose state show up instantly, not after one more key press
- * Separate best score from score
+ * Possibly: separate button to restart the game after losing
+ * Separate best score from score, and make it a persistent value
  * Add comments
 */
 const debug = false;
@@ -287,7 +288,7 @@ function initScores() {
 
     // set the scores based on the grid's dataset's value
     document.getElementById("value").innerHTML = `${value}`;
-    document.getElementById("best_value").innerHTML = `${value}`; // TODO: change this to persistent value if possible
+    document.getElementById("best_value").innerHTML = `${value}`;
 }
 
 /* STYLE STUFF */
