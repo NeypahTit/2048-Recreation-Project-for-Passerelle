@@ -13,7 +13,7 @@ function buildGridOverlay() {
     let table = document.createElement("div");
 
     table.className += "grid";
-    table.id = " ";
+    table.id = "grid_base";
     table.dataset.value = 0;
 
     for (let i = 0; i < size; i++) { // rows
