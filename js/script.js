@@ -1,5 +1,5 @@
 /* Major thanks to https://codepen.io/fabi_yo_/pen/zNrmwZ for JavaScript code help */
-let debug = true;
+let debug = false;
 
 /* Init */
 window.onload = function() {
