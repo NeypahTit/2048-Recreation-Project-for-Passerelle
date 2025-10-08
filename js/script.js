@@ -1,12 +1,19 @@
 /* Major thanks to https://codepen.io/fabi_yo_/pen/zNrmwZ for JavaScript code help */
+
+/** @todo
+ * UNDERSTAND MOVEMENT!!!
+ * Make game lose state show up instantly, not after one more key press
+ * Separate best score from score
+ * Add comments
+*/
 const debug = false;
 
 /* Init */
-window.onload = function() {
+window.onload = () => {
     if (debug) document.getElementById("status").className = "lose";
     buildGridOverlay();  // Generates grid-overlay
     tileCreator(2, false); // Creates 2 cells
-    // directions(); 
+    window.addEventListener("onkeydown", directions);
     initScores();
 };
 
@@ -86,7 +93,7 @@ function tileCreator(c, timeOut) {
 
         if (debug) console.info(`${timeOut}`);
         
-        // used for resetting the game: if true, makes this className assignment wait until everything else has been reset first
+        // if true, makes this className assignment wait for 10ms
         if (timeOut === false) {
             tile.className = "tile " + tileValue;
         } else {
@@ -97,6 +104,143 @@ function tileCreator(c, timeOut) {
     }
 }
 
+/* Tile movement */
+document.onkeydown = directions;
+
+function directions(e) {
+    // UP ARROW KEY //
+    if (e.keyCode == "38") {
+        let count = 2;
+
+        for (let x = 2; x > 1; x--) {
+            for (let y = 1; y < 5; y++) {
+                moveTilesMain(x, y, -1, 0);
+                if (debug) console.info(`${x}${y}`);
+            }
+
+            if (x == 2) {
+                x += count;
+                count++;
+            }
+
+            if (count > 4) break;
+        }
+
+        cellReset();
+    }
+    // DOWN ARROW KEY //
+    else if (e.keyCode == "40") {
+        let count = -2;
+
+        for (let x = 3; x < 4; x++) {
+            for (let y = 1; y < 5; y++) {
+                moveTilesMain(x, y, 1, 0);
+                if (debug) console.info(`${x}${y}`);
+            }
+
+            if (x == 3) {
+                x += count;
+                count--;
+            }
+
+            if (count < -4) break;
+        }
+
+        cellReset();
+    }
+    // LEFT ARROW KEY //
+    else if (e.keyCode == "37") {
+        let count = 2;
+
+        for (let x = 2; x > 1; x--) {
+            for (let y = 1; y < 5; y++) {
+                moveTilesMain(y, x, 0, -1);
+                if (debug) console.info(`${x}${y}`);
+            }
+
+            if (x == 2) {
+                x += count;
+                count++;
+            }
+
+            if (count > 4) break;
+        }
+
+        cellReset();
+    }
+    // RIGHT ARROW KEY //
+    else if (e.keyCode == "39") {
+        let count = -2;
+
+        for (let x = 3; x < 4; x++) {
+            for (let y = 1; y < 5; y++) {
+                moveTilesMain(y, x, 0, 1);
+                if (debug) console.info(`${x}${y}`);
+            }
+
+            if (x == 3) {
+                x += count;
+                count--;
+            }
+
+            if (count < -4) break;
+        }
+
+        cellReset();
+    }
+}
+
+function moveTilesMain(x, y, offsetX, offsetY) {
+    let tile = document.getElementById(`tile_${x}${y}`); // current tile
+    let checker = document.getElementById(`${x}${y}`); // current tile
+    let xAround = x + offsetX;
+    let yAround = y + offsetY;
+
+    if (xAround > 0 && xAround < 5 && yAround > 0 && yAround < 5 && checker.className == "grid_cell active") {
+        let around = document.getElementById(`${xAround}${yAround}`);
+
+        if (around.className == "grid_cell active") {
+            // catching
+            let aroundTile = document.getElementById(`tile_${xAround}${yAround}`);
+
+            if (aroundTile.innerHTML == tile.innerHTML) {
+                // same
+                let value = tile.dataset.value * 2;
+
+                aroundTile.dataset.value = `${value}`;
+                aroundTile.className = "tile " + value;
+                aroundTile.innerHTML = `${value}`;
+                colorSet(value, aroundTile);
+                checker.removeChild(tile);
+                checker.className = "grid_cell";
+                around.className = "grid_cell active merged";
+                document.getElementsByClassName("grid").id = "moved";
+                document.getElementsByClassName("grid").className = "grid " + value;
+
+                let grid = document.getElementById("grid_base");
+                let scoreValue = parseInt(grid.dataset.value);
+                let newScore = value + scoreValue;
+
+                grid.dataset.value = newScore;
+                
+                let score = document.getElementById("value");
+                let bestScore = document.getElementById("best_value");
+
+                score.innerHTML = `${newScore}`;
+                bestScore.innerHTML = `${newScore}`;
+            }
+        } else if (around.className == "grid_cell") {
+            // not catching
+            around.appendChild(tile);
+            around.className = "grid_cell active";
+            tile.id = `tile_${xAround}${yAround}`
+            checker.className = "grid_cell";
+            document.getElementsByClassName("grid").id = "moved";
+        }
+    }
+}
+
+/* Making sure cells are operational during gameplay + for resetting + lose condition checking */
 function cellReset() {
     let count = 0;
     let baseGrid = document.getElementsByClassName("grid");
@@ -119,7 +263,7 @@ function cellReset() {
 
             // if the chosen cell was merged, remove the merge class from it
             if (resetter.className == "grid_cell active merged") {
-                resetter.className == "grid_cell active";
+                resetter.className = "grid_cell active";
             }
         }
     }
@@ -127,7 +271,9 @@ function cellReset() {
     // if all cells are not empty
     if (count == 16) {
         document.getElementById("status").className = "lose";
-    } else if (baseGrid.id == "moved") { // if you have moved the tiles, create a new tile
+    }
+    // if you have moved the tiles, create a new tile and then assign its value in its className after 10ms delay
+    else if (baseGrid.id == "moved") {
         tileCreator(1, true);
     }
 

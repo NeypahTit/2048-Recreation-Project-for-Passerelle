@@ -132,7 +132,6 @@ div > div > div > div {
     border-radius: 0px;
     font-weight: 200;
     top: 0;
-    left: -1px;
     color: black;
     transition: 0.3s all;
     display: -webkit-box;
