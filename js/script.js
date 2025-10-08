@@ -88,11 +88,11 @@ function tileCreator(c, timeOut) {
 }
 
 function initScores() {
-  var grid = document.getElementById("grid_base");
-  var value = grid.dataset.value;
+  let grid = document.getElementById("grid_base");
+  let value = grid.dataset.value;
 
   document.getElementById("value").innerHTML = `${value}`;
-  document.getElementById("best_value").innerHTML = `${value}`;
+  document.getElementById("best_value").innerHTML = `${value}`; // TODO: change this to persistent value if possible
 }
 
 /* STYLE STUFF */
