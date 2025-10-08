@@ -1,9 +1,9 @@
 /* Major thanks to https://codepen.io/fabi_yo_/pen/zNrmwZ for JavaScript code help */
-let debug = false;
+const debug = false;
 
 /* Init */
 window.onload = function() {
-    if (debug) document.getElementById('status').className = 'lose';
+    if (debug) document.getElementById("status").className = "lose";
     buildGridOverlay();  // Generates grid-overlay
     tileCreator(2, false); // Creates 2 cells
     // directions(); 
@@ -84,9 +84,10 @@ function tileCreator(c, timeOut) {
         position.className += " active";
         tile.dataset.value = `${tileValue}`;
 
+        if (debug) console.info(`${timeOut}`);
+        
         // used for resetting the game: if true, makes this className assignment wait until everything else has been reset first
-        console.info(`${timeOut}`);
-        if (timeOut == false) {
+        if (timeOut === false) {
             tile.className = "tile " + tileValue;
         } else {
             setTimeout(() => {
@@ -96,66 +97,126 @@ function tileCreator(c, timeOut) {
     }
 }
 
-function initScores() {
-  let grid = document.getElementById("grid_base");
-  let value = grid.dataset.value;
+function cellReset() {
+    let count = 0;
+    let baseGrid = document.getElementsByClassName("grid");
 
-  document.getElementById("value").innerHTML = `${value}`;
-  document.getElementById("best_value").innerHTML = `${value}`; // TODO: change this to persistent value if possible
+    if (debug) console.log(baseGrid.id);
+
+    for (let x = 1; x < 5; x++) { // rows
+        for (let y = 1; y < 5; y++) { // cells
+            let resetter = document.getElementById(`${x}${y}`);
+
+            // if the chosen cell has anything in it, increase the full cell counter
+            if (resetter.innerHTML != "") {
+                count++;
+            }
+
+            // if the chosen cell is empty, set its class to a basic grid cell
+            if (resetter.innerHTML == "") {
+                resetter.className = "grid_cell";
+            }
+
+            // if the chosen cell was merged, remove the merge class from it
+            if (resetter.className == "grid_cell active merged") {
+                resetter.className == "grid_cell active";
+            }
+        }
+    }
+
+    // if all cells are not empty
+    if (count == 16) {
+        document.getElementById("status").className = "lose";
+    } else if (baseGrid.id == "moved") { // if you have moved the tiles, create a new tile
+        tileCreator(1, true);
+    }
+
+    // reset the base grid's id
+    baseGrid.id = "grid_base";
+}
+
+function initScores() {
+    let grid = document.getElementById("grid_base");
+    let value = grid.dataset.value;
+
+    // set the scores based on the grid's dataset's value
+    document.getElementById("value").innerHTML = `${value}`;
+    document.getElementById("best_value").innerHTML = `${value}`; // TODO: change this to persistent value if possible
 }
 
 /* STYLE STUFF */
 function colorSet(value, tile) {
     switch(value) {
         case 2:
-            tile.style.background = '#fffcf3';
-            tile.style.color = 'black';
+            tile.style.background = "#fffcf3";
+            tile.style.color = "black";
             break;
         case 4:
-            tile.style.background = '#fff7ce';
-            tile.style.color = 'black';
+            tile.style.background = "#fff7ce";
+            tile.style.color = "black";
             break;
         case 8:
-            tile.style.background = '#ffbdac';
-            tile.style.color = 'black';
+            tile.style.background = "#ffbdac";
+            tile.style.color = "black";
             break;
         case 16:
-            tile.style.background = '#ff7d7d';
-            tile.style.color = 'black';
+            tile.style.background = "#ff7d7d";
+            tile.style.color = "black";
             break;
         case 32:
-            tile.style.background = '#ff4a4a';
-            tile.style.color = 'white';
+            tile.style.background = "#ff4a4a";
+            tile.style.color = "white";
             break;
         case 64:
-            tile.style.background = '#ff1a1a';
-            tile.style.color = 'white';
+            tile.style.background = "#ff1a1a";
+            tile.style.color = "white";
             break;
         case 128:
-            tile.style.background = '#fffb95';
-            tile.style.color = 'black';
-            tile.style.fontSize = '50px';
+            tile.style.background = "#fffb95";
+            tile.style.color = "black";
+            tile.style.fontSize = "50px";
             break;
         case 256:
-            tile.style.background = '#fff974';
-            tile.style.color = 'black';
-            tile.style.fontSize = '50px';
+            tile.style.background = "#fff974";
+            tile.style.color = "black";
+            tile.style.fontSize = "50px";
             break;
         case 512:
-            tile.style.background = '#fff74b';
-            tile.style.color = 'black';
-            tile.style.fontSize = '50px';
+            tile.style.background = "#fff74b";
+            tile.style.color = "black";
+            tile.style.fontSize = "50px";
             break;
         case 1024:
-            tile.style.background = '#fff629';
-            tile.style.color = 'black';
-            tile.style.fontSize = '40px';
+            tile.style.background = "#fff629";
+            tile.style.color = "black";
+            tile.style.fontSize = "40px";
             break;
         case 2048:
-            tile.style.background = '#fff400';
-            tile.style.color = 'black';
-            tile.style.fontSize = '40px';
-            document.getElementById('status').className = 'won';
+            tile.style.background = "#fff400";
+            tile.style.color = "black";
+            tile.style.fontSize = "40px";
+            document.getElementById("status").className = "won";
             break;
     }                  
+}
+
+function reset() {
+    for (let x = 1; x < 5; x++) { // rows
+        for (let y = 1; y < 5; y++) { // cells
+            let resetter = document.getElementById(`${x}${y}`);
+
+            // removes any active cells, i.e. tiles with any number
+            if (resetter.className == "grid_cell active") {
+                let tile = document.getElementById(`tile_${x}${y}`);
+                resetter.removeChild(tile);
+            }
+        }
+    }
+
+    document.getElementById("status").className = "";
+    document.getElementById("grid_base").dataset.value = 0;
+
+    initScores();
+    cellReset();
+    tileCreator(2, false);
 }
