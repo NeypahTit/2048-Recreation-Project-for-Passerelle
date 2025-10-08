@@ -4,7 +4,7 @@ window.onload = function() {
     buildGridOverlay();  // Generates grid-overlay
     tileCreator(2, false); // Creates 2 cells
     // directions(); 
-    // score(0);
+    initScores();
 };
 
 /* Generates the grid! */
@@ -85,6 +85,14 @@ function tileCreator(c, timeOut) {
             }, 10);
         }
     }
+}
+
+function initScores() {
+  var grid = document.getElementById("grid_base");
+  var value = grid.dataset.value;
+
+  document.getElementById("value").innerHTML = `${value}`;
+  document.getElementById("best_value").innerHTML = `${value}`;
 }
 
 /* STYLE STUFF */
