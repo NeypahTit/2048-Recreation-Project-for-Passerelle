@@ -9,6 +9,7 @@
  * Stop any key listening after a tile with number of 2048 is reached
  * Possibly: separate button to restart the game after losing
  * Separate best score from score, and make it a persistent value
+ * Add info button
  * Add comments
 */
 const debug = false;
