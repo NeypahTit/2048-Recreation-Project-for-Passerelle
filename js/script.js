@@ -2,7 +2,10 @@
 
 /** @todo
  * UNDERSTAND MOVEMENT!!!
+   * directions() I think I get
+   * Understand moveTilesMain()
  * Make game lose state show up instantly, not after one more key press
+ * Make sure game lose doesn't falsely flag itself
  * Possibly: separate button to restart the game after losing
  * Separate best score from score, and make it a persistent value
  * Add comments
@@ -197,6 +200,7 @@ function moveTilesMain(x, y, offsetX, offsetY) {
     let xAround = x + offsetX;
     let yAround = y + offsetY;
 
+    // if xAround and yAround is between 1-4, and it is an active tile, either we have an obstacle in front of us, or we can merge
     if (xAround > 0 && xAround < 5 && yAround > 0 && yAround < 5 && checker.className == "grid_cell active") {
         let around = document.getElementById(`${xAround}${yAround}`);
 
@@ -230,7 +234,9 @@ function moveTilesMain(x, y, offsetX, offsetY) {
                 score.innerHTML = `${newScore}`;
                 bestScore.innerHTML = `${newScore}`;
             }
-        } else if (around.className == "grid_cell") {
+        }
+        // if not, we move around
+        else if (around.className == "grid_cell") {
             // not catching
             around.appendChild(tile);
             around.className = "grid_cell active";
