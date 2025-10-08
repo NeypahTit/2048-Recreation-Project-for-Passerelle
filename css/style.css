@@ -161,10 +161,13 @@ div > div > div > div {
 }
 
 .won {
-    background-color: #337538;
-    transition: 0.3s all; 
+    background-color: #48ff58;
+    transition: 0.5s all;
+    opacity: 0.6;
 }
 
 .lose {
-    background-color: #7D3C34;
+    background-color: #ff6b57;
+    transition: 0.5s all;
+    opacity: 0.6;
 }

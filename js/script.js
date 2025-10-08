@@ -1,6 +1,9 @@
 /* Major thanks to https://codepen.io/fabi_yo_/pen/zNrmwZ for JavaScript code help */
+let debug = true;
+
 /* Init */
 window.onload = function() {
+    if (debug) document.getElementById('status').className = 'lose';
     buildGridOverlay();  // Generates grid-overlay
     tileCreator(2, false); // Creates 2 cells
     // directions(); 
@@ -61,6 +64,12 @@ function tileCreator(c, timeOut) {
 
         // should be 20% chance for a tile of number 4
         tileValue = (twoOrFour >= 9) ? 4 : 2;
+
+        // DEBUG
+        if (debug) {
+            tileArrayValue = [2,4,8,16,32,64,128,256,512,1024,2048];
+            tileValue = tileArrayValue[(Math.floor(Math.random() * 11))];
+        }
 
         // use found random xy for the tile's position to create it
         let position = document.getElementById(`${randomX}${randomY}`);
