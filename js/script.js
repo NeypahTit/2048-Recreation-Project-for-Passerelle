@@ -10,6 +10,7 @@
  * Possibly: separate button to restart the game after losing
  * Separate best score from score, and make it a persistent value
  * Add info button
+ * Add text indicating win/loss
  * Add comments
 */
 const debug = false;
