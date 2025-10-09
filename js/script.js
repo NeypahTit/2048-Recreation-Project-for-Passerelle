@@ -6,7 +6,6 @@
  * Stop any key listening after a tile with number of 2048 is reached
  * Possibly: separate button to restart the game after losing
  * Add text indicating win/loss
- * Add comments
 */
 const debug = false;
 let movementActive = true;
