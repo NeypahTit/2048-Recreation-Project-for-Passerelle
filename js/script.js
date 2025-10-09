@@ -3,16 +3,16 @@
 /** @todo
  * Make game lose state show up instantly, not after one more key press
  * Make sure game lose doesn't falsely flag itself
- * Stop any key listening after a tile with number of 2048 is reached
  * Possibly: separate button to restart the game after losing
  * Add text indicating win/loss
 */
 const debug = false;
 let movementActive = true;
+let infoWindowOpen = false;
 
 /* Init */
 window.onload = () => {
-    if (debug) document.getElementById("status").className = "lose";
+    if (debug) changeGameState("lose");
     buildGridOverlay();  // Generates grid-overlay
     tileCreator(2, false); // Creates 2 cells
     window.addEventListener("onkeydown", directions);
@@ -288,7 +288,7 @@ function cellReset() {
 
     // if all cells are not empty, we lose
     if (count == 16) {
-        document.getElementById("status").className = "lose";
+        changeGameState("lose");
     }
     // if you have moved the tiles, create a new tile with a 10ms delay
     else if (baseGrid.id == "moved") {
@@ -327,6 +327,37 @@ function setScores(value) {
         }
 
         bestScore.innerHTML = parseInt(localStorage.getItem("LOCAL_BEST_SCORE"));
+    }
+}
+
+/* changes the game's state when winning/losing */
+function changeGameState(state) {
+    switch (state) {
+        case "lose":
+            document.getElementById("status").className = "lose";
+            break;
+        case "win":
+            setMovement("win");
+            document.getElementById("status").className = "won";
+            break;
+    }
+}
+
+/* sets ability to move tiles based on the source */
+function setMovement(source) {
+    switch (source) {
+        case "info":
+            // if 2048 tile is present still, ignore
+            if (document.getElementById("status").className != "won") {
+                movementActive = (infoWindowOpen) ? false : true;
+            }
+            break;
+        case "reset":
+            if (!infoWindowOpen) movementActive = true;
+            break;
+        case "win":
+            movementActive = false;
+            break;
     }
 }
 
@@ -381,7 +412,7 @@ function colorSet(value, tile) {
             tile.style.background = "#fff400";
             tile.style.color = "black";
             tile.style.fontSize = "40px";
-            document.getElementById("status").className = "won";
+            changeGameState("win");
             break;
     }                  
 }
@@ -390,7 +421,8 @@ function colorSet(value, tile) {
 function info() {
     setTimeout(() => {
         document.getElementById("description").classList.toggle("show");
-        movementActive = !movementActive;
+        infoWindowOpen = !infoWindowOpen;
+        setMovement("info");
     }, 10); 
 }
 
@@ -409,6 +441,7 @@ function reset() {
 
     document.getElementById("status").className = "";
     document.getElementById("grid_base").dataset.value = 0;
+    setMovement("reset");
 
     initScores();
     cellReset();
