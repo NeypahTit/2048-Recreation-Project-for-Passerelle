@@ -3,7 +3,6 @@
 /** @todo
  * Make game lose state show up instantly, not after one more key press
  * Make sure game lose doesn't falsely flag itself
- * Possibly: separate button to restart the game after losing
  * Add text indicating win/loss
 */
 const debug = false;
