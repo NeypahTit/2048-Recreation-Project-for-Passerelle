@@ -7,13 +7,13 @@
  * Make game lose state show up instantly, not after one more key press
  * Make sure game lose doesn't falsely flag itself
  * Stop any key listening after a tile with number of 2048 is reached
- * Stop any key listening while info popup is up
  * Possibly: separate button to restart the game after losing
  * Separate best score from score, and make it a persistent value
  * Add text indicating win/loss
  * Add comments
 */
 const debug = false;
+let movementActive = true;
 
 /* Init */
 window.onload = () => {
@@ -115,85 +115,88 @@ function tileCreator(c, timeOut) {
 document.onkeydown = directions;
 
 function directions(e) {
-    // UP ARROW KEY //
-    if (e.keyCode == "38") {
-        let count = 2;
+    // if enabled
+    if (movementActive) {
+        // UP ARROW KEY //
+        if (e.keyCode == "38") {
+            let count = 2;
 
-        for (let x = 2; x > 1; x--) {
-            for (let y = 1; y < 5; y++) {
-                moveTilesMain(x, y, -1, 0);
-                if (debug) console.info(`${x}${y}`);
+            for (let x = 2; x > 1; x--) {
+                for (let y = 1; y < 5; y++) {
+                    moveTilesMain(x, y, -1, 0);
+                    if (debug) console.info(`${x}${y}`);
+                }
+
+                if (x == 2) {
+                    x += count;
+                    count++;
+                }
+
+                if (count > 4) break;
             }
 
-            if (x == 2) {
-                x += count;
-                count++;
-            }
-
-            if (count > 4) break;
+            cellReset();
         }
+        // DOWN ARROW KEY //
+        else if (e.keyCode == "40") {
+            let count = -2;
 
-        cellReset();
-    }
-    // DOWN ARROW KEY //
-    else if (e.keyCode == "40") {
-        let count = -2;
+            for (let x = 3; x < 4; x++) {
+                for (let y = 1; y < 5; y++) {
+                    moveTilesMain(x, y, 1, 0);
+                    if (debug) console.info(`${x}${y}`);
+                }
 
-        for (let x = 3; x < 4; x++) {
-            for (let y = 1; y < 5; y++) {
-                moveTilesMain(x, y, 1, 0);
-                if (debug) console.info(`${x}${y}`);
+                if (x == 3) {
+                    x += count;
+                    count--;
+                }
+
+                if (count < -4) break;
             }
 
-            if (x == 3) {
-                x += count;
-                count--;
-            }
-
-            if (count < -4) break;
+            cellReset();
         }
+        // LEFT ARROW KEY //
+        else if (e.keyCode == "37") {
+            let count = 2;
 
-        cellReset();
-    }
-    // LEFT ARROW KEY //
-    else if (e.keyCode == "37") {
-        let count = 2;
+            for (let x = 2; x > 1; x--) {
+                for (let y = 1; y < 5; y++) {
+                    moveTilesMain(y, x, 0, -1);
+                    if (debug) console.info(`${x}${y}`);
+                }
 
-        for (let x = 2; x > 1; x--) {
-            for (let y = 1; y < 5; y++) {
-                moveTilesMain(y, x, 0, -1);
-                if (debug) console.info(`${x}${y}`);
+                if (x == 2) {
+                    x += count;
+                    count++;
+                }
+
+                if (count > 4) break;
             }
 
-            if (x == 2) {
-                x += count;
-                count++;
-            }
-
-            if (count > 4) break;
+            cellReset();
         }
+        // RIGHT ARROW KEY //
+        else if (e.keyCode == "39") {
+            let count = -2;
 
-        cellReset();
-    }
-    // RIGHT ARROW KEY //
-    else if (e.keyCode == "39") {
-        let count = -2;
+            for (let x = 3; x < 4; x++) {
+                for (let y = 1; y < 5; y++) {
+                    moveTilesMain(y, x, 0, 1);
+                    if (debug) console.info(`${x}${y}`);
+                }
 
-        for (let x = 3; x < 4; x++) {
-            for (let y = 1; y < 5; y++) {
-                moveTilesMain(y, x, 0, 1);
-                if (debug) console.info(`${x}${y}`);
+                if (x == 3) {
+                    x += count;
+                    count--;
+                }
+
+                if (count < -4) break;
             }
 
-            if (x == 3) {
-                x += count;
-                count--;
-            }
-
-            if (count < -4) break;
+            cellReset();
         }
-
-        cellReset();
     }
 }
 
@@ -359,7 +362,8 @@ function colorSet(value, tile) {
 /* Shows the info thing after 10ms */
 function info() {
     setTimeout(() => {
-        document.getElementById('description').classList.toggle('show');
+        document.getElementById("description").classList.toggle("show");
+        movementActive = !movementActive;
     }, 10); 
 }
 
