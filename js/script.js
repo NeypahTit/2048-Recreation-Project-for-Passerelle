@@ -5,7 +5,6 @@
  * Make sure game lose doesn't falsely flag itself
  * Stop any key listening after a tile with number of 2048 is reached
  * Possibly: separate button to restart the game after losing
- * Make best score value persist between page reloads (probably using cookies?)
  * Add text indicating win/loss
  * Add comments
 */
@@ -316,8 +315,19 @@ function setScores(value) {
     score.innerHTML = `${value}`;
 
     // check if we should update best score
-    if (parseInt(bestScore.innerHTML) < parseInt(score.innerHTML) || bestScore.innerHTML == "") {
-        bestScore.innerHTML = parseInt(score.innerHTML);
+    if (parseInt(bestScore.innerHTML) < value || bestScore.innerHTML == "") {
+        let localValue = localStorage.getItem("LOCAL_BEST_SCORE");
+
+        // check if our localStorage key:value pair is valid to use
+        if (localValue !== null) {
+            localStorage.setItem("LOCAL_BEST_SCORE", (parseInt(localValue) >= value) ? localValue : value);
+            if (debug) console.log("a", `| localValue: ${localValue}`);
+        } else {
+            localStorage.setItem("LOCAL_BEST_SCORE", 0);
+            if (debug) console.log("b", `| localValue: ${localValue}`);
+        }
+
+        bestScore.innerHTML = parseInt(localStorage.getItem("LOCAL_BEST_SCORE"));
     }
 }
 
