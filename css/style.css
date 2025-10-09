@@ -28,6 +28,32 @@ div.game {
     margin-right: 15px;
 }
 
+div.description {
+    height: 350px;
+    width: 352px;
+    transform: translate(-50%, -50%) scale(0);
+    position: absolute;
+    left: 50%;
+    top: 425px;
+    background: #fff;
+    padding: 50px;
+    border-radius: 0px;
+    z-index: 1000;
+    box-shadow: 0px 0px 5px rgba(0,0,0,0.5);
+    text-align: center;
+    visibility: hidden;
+    opacity: 0;
+    font-size: 15px;
+    transition: 0.3s all;
+}
+
+.description.show {
+    visibility: visible;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    transition: 0.3s all;
+}
+
 .info {
     width: 40px;
     height: 40px;

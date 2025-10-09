@@ -12,7 +12,7 @@
             <div class="head">
                 <div class="title">
                     2048
-                    &nbsp;
+                    <button class="info" onClick='info()'>i</button>
                     <button id="repeat" class="info repeat" onClick='reset()'>↻</button>
                 </div>
                 <div class="score">
@@ -25,6 +25,17 @@
                     <br/>
                     <span id="best_value"></span>
                 </div>
+            </div>
+            <div class="description" id="description">
+                <b><span style="font-size: 32px;">How to play:</span></b><br/><br/>
+                Use your arrow-keys to slide the tiles.<br/>
+                Two tiles with the same value in line can be merged.<br/>
+                The goal is to merge the tiles and get the 2048 tile.<br/><br/>
+                The score is a sum of the merged tiles, and best is the highest score you have ever gotten.<br><br/>
+                <i>Press the info button again to close this pop-up.</i><br/><br/>
+                <span>_______________________________</span><br/><br/>
+                Recreation project by Neypah_Tit, 10/2025<br/>
+                Major thanks to <a target="_blank" href="https://codepen.io/fabi_yo_/pen/zNrmwZ">this webpage</a> for helping me with this project!
             </div>
             <div class="field">
                 <div class="row">

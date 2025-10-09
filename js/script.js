@@ -7,9 +7,9 @@
  * Make game lose state show up instantly, not after one more key press
  * Make sure game lose doesn't falsely flag itself
  * Stop any key listening after a tile with number of 2048 is reached
+ * Stop any key listening while info popup is up
  * Possibly: separate button to restart the game after losing
  * Separate best score from score, and make it a persistent value
- * Add info button
  * Add text indicating win/loss
  * Add comments
 */
@@ -354,6 +354,13 @@ function colorSet(value, tile) {
             document.getElementById("status").className = "won";
             break;
     }                  
+}
+
+/* Shows the info thing after 10ms */
+function info() {
+    setTimeout(() => {
+        document.getElementById('description').classList.toggle('show');
+    }, 10); 
 }
 
 function reset() {
