@@ -54,12 +54,11 @@ div.description {
     transition: 0.3s all;
 }
 
-.info {
+.info, .repeat {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     font-weight: 100;
-    cursor: pointer;
     border: 0px;
     border-color: #aaa;
     background-color: #88b1ef;
@@ -71,8 +70,9 @@ div.description {
     transition: 0.1s background-color;
 }
 
-.info:hover {
+.info:hover, #repeat:hover {
     background-color: #6593d8;
+    cursor: pointer;
 }
 
 .repeat {

@@ -353,6 +353,7 @@ function setMovement(source) {
             }
             break;
         case "reset":
+            // failsafe just in case
             if (!infoWindowOpen) movementActive = true;
             break;
         case "win":
@@ -422,28 +423,34 @@ function info() {
     setTimeout(() => {
         document.getElementById("description").classList.toggle("show");
         infoWindowOpen = !infoWindowOpen;
+        document.getElementsByClassName("repeat")[0].id = (infoWindowOpen) ? "" : "repeat";
         setMovement("info");
     }, 10); 
 }
 
 function reset() {
-    for (let x = 1; x < 5; x++) { // rows
-        for (let y = 1; y < 5; y++) { // cells
-            let resetter = document.getElementById(`${x}${y}`);
+    let repeatBtn = document.getElementsByClassName("repeat")[0];
 
-            // removes any active cells, i.e. tiles with any number
-            if (resetter.className == "grid_cell active") {
-                let tile = document.getElementById(`tile_${x}${y}`);
-                resetter.removeChild(tile);
+    // if the button is operational
+    if (repeatBtn.id == "repeat") {
+        for (let x = 1; x < 5; x++) { // rows
+            for (let y = 1; y < 5; y++) { // cells
+                let resetter = document.getElementById(`${x}${y}`);
+
+                // removes any active cells, i.e. tiles with any number
+                if (resetter.className == "grid_cell active") {
+                    let tile = document.getElementById(`tile_${x}${y}`);
+                    resetter.removeChild(tile);
+                }
             }
         }
+
+        document.getElementById("status").className = "";
+        document.getElementById("grid_base").dataset.value = 0;
+        setMovement("reset");
+
+        initScores();
+        cellReset();
+        tileCreator(2, false);
     }
-
-    document.getElementById("status").className = "";
-    document.getElementById("grid_base").dataset.value = 0;
-    setMovement("reset");
-
-    initScores();
-    cellReset();
-    tileCreator(2, false);
 }
