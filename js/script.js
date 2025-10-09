@@ -1,14 +1,11 @@
 /* Major thanks to https://codepen.io/fabi_yo_/pen/zNrmwZ for JavaScript code help */
 
 /** @todo
- * UNDERSTAND MOVEMENT!!!
-   * directions() I think I get
-   * Understand moveTilesMain()
  * Make game lose state show up instantly, not after one more key press
  * Make sure game lose doesn't falsely flag itself
  * Stop any key listening after a tile with number of 2048 is reached
  * Possibly: separate button to restart the game after losing
- * Separate best score from score, and make it a persistent value
+ * Make best score value persist between page reloads (probably using cookies?)
  * Add text indicating win/loss
  * Add comments
 */
@@ -164,7 +161,7 @@ function directions(e) {
             for (let x = 2; x > 1; x--) {
                 for (let y = 1; y < 5; y++) {
                     moveTilesMain(y, x, 0, -1);
-                    if (debug) console.info(`${x}${y}`);
+                    if (debug) console.info(`${y}${x}`);
                 }
 
                 if (x == 2) {
@@ -184,7 +181,7 @@ function directions(e) {
             for (let x = 3; x < 4; x++) {
                 for (let y = 1; y < 5; y++) {
                     moveTilesMain(y, x, 0, 1);
-                    if (debug) console.info(`${x}${y}`);
+                    if (debug) console.info(`${y}${x}`);
                 }
 
                 if (x == 3) {
@@ -202,52 +199,62 @@ function directions(e) {
 
 function moveTilesMain(x, y, offsetX, offsetY) {
     let tile = document.getElementById(`tile_${x}${y}`); // current tile
-    let checker = document.getElementById(`${x}${y}`); // current tile
+    let checker = document.getElementById(`${x}${y}`); // current tile's cell
     let xAround = x + offsetX;
     let yAround = y + offsetY;
 
-    // if xAround and yAround is between 1-4, and it is an active tile, either we have an obstacle in front of us, or we can merge
+    // if the neighboring cell is within boundaries and the current tile's cell is active...
     if (xAround > 0 && xAround < 5 && yAround > 0 && yAround < 5 && checker.className == "grid_cell active") {
+        // get the cell in front of us
         let around = document.getElementById(`${xAround}${yAround}`);
 
+        // if the cell that's in front of us is active, we found a potential obstacle!
         if (around.className == "grid_cell active") {
-            // catching
+            // get the mentioned cell's tile
             let aroundTile = document.getElementById(`tile_${xAround}${yAround}`);
 
+            // if the value of the tile of the active cell in front of us is the same as our tile's value, we merge
             if (aroundTile.innerHTML == tile.innerHTML) {
-                // same
+                // add the values together
                 let value = tile.dataset.value * 2;
 
+                // the tile in front of us becomes the receiver of the current tile, so adjust accordingly
                 aroundTile.dataset.value = `${value}`;
                 aroundTile.className = "tile " + value;
                 aroundTile.innerHTML = `${value}`;
                 colorSet(value, aroundTile);
+
+                // then, remove the current tile and make current cell inactive
                 checker.removeChild(tile);
                 checker.className = "grid_cell";
-                around.className = "grid_cell active merged";
-                document.getElementsByClassName("grid").id = "moved";
-                document.getElementsByClassName("grid").className = "grid " + value;
 
+                // tell the game that the cell in front of us just merged
+                around.className = "grid_cell active merged";
+
+                // tell the grid that we moved
+                document.getElementsByClassName("grid").id = "moved";
+
+                // do stuff to update the score
                 let grid = document.getElementById("grid_base");
                 let scoreValue = parseInt(grid.dataset.value);
                 let newScore = value + scoreValue;
 
                 grid.dataset.value = newScore;
                 
-                let score = document.getElementById("value");
-                let bestScore = document.getElementById("best_value");
-
-                score.innerHTML = `${newScore}`;
-                bestScore.innerHTML = `${newScore}`;
+                setScores(newScore);
             }
         }
-        // if not, we move around
+        // if not, we move around because it is an empty cell in front of us
         else if (around.className == "grid_cell") {
-            // not catching
+            // append the current tile to the cell in front, set that cell to be active
             around.appendChild(tile);
             around.className = "grid_cell active";
+
+            // set the new correct tile id, make current cell inactive
             tile.id = `tile_${xAround}${yAround}`
             checker.className = "grid_cell";
+
+            // tell the grid that we moved
             document.getElementsByClassName("grid").id = "moved";
         }
     }
@@ -281,11 +288,11 @@ function cellReset() {
         }
     }
 
-    // if all cells are not empty
+    // if all cells are not empty, we lose
     if (count == 16) {
         document.getElementById("status").className = "lose";
     }
-    // if you have moved the tiles, create a new tile and then assign its value in its className after 10ms delay
+    // if you have moved the tiles, create a new tile with a 10ms delay
     else if (baseGrid.id == "moved") {
         tileCreator(1, true);
     }
@@ -299,8 +306,19 @@ function initScores() {
     let value = grid.dataset.value;
 
     // set the scores based on the grid's dataset's value
-    document.getElementById("value").innerHTML = `${value}`;
-    document.getElementById("best_value").innerHTML = `${value}`;
+    setScores(value);
+}
+
+function setScores(value) {
+    let score = document.getElementById("value");
+    let bestScore = document.getElementById("best_value");
+
+    score.innerHTML = `${value}`;
+
+    // check if we should update best score
+    if (parseInt(bestScore.innerHTML) < parseInt(score.innerHTML) || bestScore.innerHTML == "") {
+        bestScore.innerHTML = parseInt(score.innerHTML);
+    }
 }
 
 /* STYLE STUFF */
