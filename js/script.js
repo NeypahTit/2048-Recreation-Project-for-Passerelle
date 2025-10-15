@@ -1,11 +1,12 @@
 /* Major thanks to https://codepen.io/fabi_yo_/pen/zNrmwZ for JavaScript code help */
 
 /** @todo
- * Make game lose state show up instantly, not after one more key press
  * Add text indicating win/loss
 */
 const debug = false;
+const debug_cellSpawner = false;
 const debug_movesLeft = false;
+
 let movementActive = true;
 let infoWindowOpen = false;
 
@@ -74,7 +75,7 @@ function tileCreator(c, timeOut) {
         tileValue = (twoOrFour >= 9) ? 4 : 2;
 
         // DEBUG
-        if (debug) {
+        if (debug_cellSpawner) {
             tileArrayValue = [2,4,8,16,32,64,128,256,512,1024,2048];
             tileValue = tileArrayValue[(Math.floor(Math.random() * 11))];
         }
@@ -92,7 +93,7 @@ function tileCreator(c, timeOut) {
         position.className += " active";
         tile.dataset.value = `${tileValue}`;
 
-        if (debug) console.info(`${timeOut}`);
+        if (debug_cellSpawner) console.info(`${timeOut}`);
         
         // if true, makes this className assignment wait for 10ms
         if (timeOut === false) {
@@ -285,13 +286,15 @@ function cellReset() {
         }
     }
 
+    // if you have moved the tiles, create a new tile with a 10ms delay
+    if (baseGrid.id == "moved") {
+        tileCreator(1, true);
+        count++;
+    }
+
     // if all cells are not empty, check if we can still move
     if (count == 16) {
         checkMovesLeft();
-    }
-    // if you have moved the tiles, create a new tile with a 10ms delay
-    else if (baseGrid.id == "moved") {
-        tileCreator(1, true);
     }
 
     // reset the base grid's id
