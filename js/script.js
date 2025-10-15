@@ -2,10 +2,10 @@
 
 /** @todo
  * Make game lose state show up instantly, not after one more key press
- * Make sure game lose doesn't falsely flag itself
  * Add text indicating win/loss
 */
 const debug = false;
+const debug_movesLeft = false;
 let movementActive = true;
 let infoWindowOpen = false;
 
@@ -285,9 +285,9 @@ function cellReset() {
         }
     }
 
-    // if all cells are not empty, we lose
+    // if all cells are not empty, check if we can still move
     if (count == 16) {
-        changeGameState("lose");
+        checkMovesLeft();
     }
     // if you have moved the tiles, create a new tile with a 10ms delay
     else if (baseGrid.id == "moved") {
@@ -296,6 +296,75 @@ function cellReset() {
 
     // reset the base grid's id
     baseGrid.id = "grid_base";
+}
+
+/* Make sure it is actually impossible to keep going */
+function checkMovesLeft() {
+    // stays false if no more moves are possible
+    hasMovesLeft = false;
+
+    for (let x = 1; x < 5; x++) { // rows
+        let currentX = x;
+
+        if (hasMovesLeft) {
+            break;
+        }
+
+        for (let y = 1; y < 5; y++) { // cells
+            let currentY = y;
+            let tile = document.getElementById(`tile_${x}${y}`); // get current tile
+            let cell = document.getElementById(`${x}${y}`); // get current cell
+            
+            if (hasMovesLeft) {
+                break;
+            }
+
+            if (debug_movesLeft) console.log(tile, "| CURRENT |", currentX, currentY);
+
+            for (let i = 0; i < 4; i++) { // in 4 cardinal directions
+                let tempX = currentX;
+                let tempY = currentY;
+
+                // which neighbor to look at
+                if (i == 0 || i == 2) {
+                    // below or above
+                    tempX = (i == 0) ? tempX + 1 : tempX - 1;
+                } else if (i == 1 || i == 3) {
+                    // right or left
+                    tempY = (i == 1) ? tempY + 1 : tempY - 1;
+                }
+
+                // get our neighboring tile & cell
+                let neighbor = document.getElementById(`tile_${tempX}${tempY}`);
+                let neighborCell = document.getElementById(`${tempX}${tempY}`);
+                if (debug_movesLeft) console.log(neighbor, "| TEMP |", tempX, tempY);
+                
+                // is it within bounds?
+                if (tempX > 0 && tempX < 5 && tempY > 0 && tempY < 5) {
+                    // is our current cell active, is the neighboring cell active, and do the associated tiles have the same value?
+                    if (cell.className == "grid_cell active" && neighborCell.className == "grid_cell active" && neighbor.innerHTML == tile.innerHTML) {
+                        // should mean that we can merge!
+                        hasMovesLeft = true;
+                        if (debug_movesLeft) console.log("hasMovesLeft is", hasMovesLeft, "(can merge)");
+                        break;
+                    }
+                    // else, is our cell or our neighboring cell an empty cell?
+                    else if (cell.className == "grid_cell" || neighborCell.className == "grid_cell") {
+                        // should mean that we can still move around!
+                        hasMovesLeft = true;
+                        if (debug_movesLeft) console.log("hasMovesLeft is", hasMovesLeft, "(current/neighbor is empty)");
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    // if no more moves are possible, lose the game
+    if (!hasMovesLeft) {
+        changeGameState("lose");
+        if (debug_movesLeft) console.log("hasMovesLeft is", hasMovesLeft);
+    }
 }
 
 function initScores() {
@@ -336,18 +405,20 @@ function changeGameState(state) {
             document.getElementById("status").className = "lose";
             break;
         case "win":
-            setMovement("win");
             document.getElementById("status").className = "won";
             break;
     }
+    
+    // game has ended, so we disable movement
+    setMovement("gameEnd");
 }
 
 /* sets ability to move tiles based on the source */
 function setMovement(source) {
     switch (source) {
         case "info":
-            // if 2048 tile is present still, ignore
-            if (document.getElementById("status").className != "won") {
+            // if game has ended, ignore this
+            if (document.getElementById("status").className == "") {
                 movementActive = (infoWindowOpen) ? false : true;
             }
             break;
@@ -355,7 +426,7 @@ function setMovement(source) {
             // failsafe just in case
             if (!infoWindowOpen) movementActive = true;
             break;
-        case "win":
+        case "gameEnd":
             movementActive = false;
             break;
     }
