@@ -1,8 +1,4 @@
 /* Major thanks to https://codepen.io/fabi_yo_/pen/zNrmwZ for JavaScript code help */
-
-/** @todo
- * Add text indicating win/loss
-*/
 const debug = false;
 const debug_cellSpawner = false;
 const debug_movesLeft = false;
@@ -403,17 +399,30 @@ function setScores(value) {
 
 /* changes the game's state when winning/losing */
 function changeGameState(state) {
+    let gameEndText = "";
+    let gameEndTextElement = document.getElementById("game_end_text");
+    let baseGrid = document.getElementsByClassName("grid")[0];
+    let field = document.getElementsByClassName("field")[0];
+
     switch (state) {
         case "lose":
             document.getElementById("status").className = "lose";
+            gameEndText = "You lost! :("
             break;
         case "win":
             document.getElementById("status").className = "won";
+            gameEndText = "You win! :D"
             break;
     }
     
     // game has ended, so we disable movement
     setMovement("gameEnd");
+
+    // setup the text stuff, and move the grid down
+    gameEndTextElement.innerHTML = gameEndText;
+    gameEndTextElement.classList.add("game_end_show");
+    baseGrid.classList.add("move_down");
+    field.classList.add("move_down");
 }
 
 /* sets ability to move tiles based on the source */
@@ -520,6 +529,10 @@ function reset() {
 
         document.getElementById("status").className = "";
         document.getElementById("grid_base").dataset.value = 0;
+        document.getElementById("grid_base").classList.remove("move_down");
+        document.getElementsByClassName("field")[0].classList.remove("move_down");
+        document.getElementById("game_end_text").innerHTML = "";
+        document.getElementById("game_end_text").classList.remove("game_end_show");
         setMovement("reset");
 
         initScores();
